@@ -11,6 +11,13 @@ h1 {
 
 }
 
+h2 {
+	text-align: left;
+	color: white;
+	font-size: 24px;
+
+}
+
 .characterCard {
 	position: relative;
 
@@ -32,3 +39,7 @@ h1 {
 	text-align: center;
 }
 
+#attack {
+	text-align: center;
+	padding-top: 30%;	
+}

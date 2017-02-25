@@ -1,69 +1,60 @@
 $(document).ready(function() {
-var obiwan = {
-	id: "obiwan",
-	name: "Obi-Wan Kenobi",
-	image: "obi-wan.jpg",
-	health: "120",
+
+var characterObject = {
+	id: "",
+	name: "",
+	image: "",
+	health: 0,
+	attack: 0,
+	counterAttack: 0,
 };
 
-var luke = {
-	id: "luke",
-	name: "Luke Skywalker",
-	image: "luke.jpg",
-	health: "100",
-};
-
-var sidious = {
-	id: "sidious",
-	name: "Darth Sidious",
-	image: "sidious.jpg",
-	health: "150",
-};
-
-var maul = {
-	id: "maul",
-	name: "Darth Maul",
-	image: "maul.jpg",
-	health: "180",
-};
-
-var characters = [obiwan, luke, sidious, maul];
+var obiwan = characterObject
+var luke = characterObject
+var sidious = characterObject
+var maul = characterObject
+var characters = [];
 
 var battle = {
 	hero: "",
 	villain: "",
-	defeated: [],
+	defeated: 0,
+	heroHealth: 0,
+	villainHealth: 0,
+	heroBaseAttack: 0,
+	heroCurrentAttack: 0,
+	villainAttack: 0,
+
 };
+
 
 $("[id=0]").on("click", function() {
 	console.log("0");
 	battleStage(0);
-})
+});
 
 $("[id=1]").on("click", function() {
 	console.log("1");
 	battleStage(1);
-
-	// console.log($.contains( "#hero", "characterName" ));
-})
+});
 
 $("[id=2]").on("click", function() {
 	console.log("2");
 	battleStage(2);
-})
+});
 
 $("[id=3]").on("click", function() {
 	console.log("3");
 	battleStage(3);
-})
+});
 
 $("[id=4]").on("click", function() {
 	console.log("4");
 	battleStage(4);
-})
+});
 
 
-function drawInitialCharacters() {
+function drawAvailableCharacters() {
 	for (var i = 0; i < characters.length; i++) {
 		value = '[id=' + i + ']';
 		drawCharacter(i, value);
@@ -86,15 +77,107 @@ function battleStage(character) {
 
 		$(id).empty();
 		drawCharacter(character, "#hero");
-		battle.hero = characters[character].name;
+		battle.hero = characters[character].id;
+		battle.heroBaseAttack = characters[character].attack;
+		battle.heroCurrentAttack = characters[character].attack;
+		battle.heroHealth = characters[character].health;
+
+		$("#instructionText").text("Choose a character to battle against!");
+
 	}
 	else if (battle.villain === "") {
 		$(id).empty();
 		drawCharacter(character, "#villain");
-		battle.villain = characters[character].name;
+		battle.villain = characters[character].id;
+		battle.villainAttack = characters[character].counterAttack;
+		battle.villainHealth = characters[character].health;
+		$("#instructionText").text("Click attack button to begin the fight!");
+		$("#attackButton").fadeIn(200);
+		console.log(battle)
 	}
 }
-drawInitialCharacters();
+
+$("#attackButton").on("click", function() {
+	battle.heroHealth -= battle.villainAttack;
+	battle.villainHealth -= battle.heroCurrentAttack;
+	battle.heroCurrentAttack += battle.heroBaseAttack;
+	checkForWinner();
+})
+
+function checkForWinner() {
+
+	if (battle.villainHealth <= 0) {
+		$("#instructionText").text("You won!");
+		$("#villain").empty();
+		battle.villain = "";
+	}
+	else if (battle.heroHealth <= 0) {
+		$("#instructionText").text("You lose!");
+		$("#hero").empty();
+	}
+}
+
+function initializeCharacters() {
+	obiwan = {
+	id: "obiwan",
+	name: "Obi-Wan Kenobi",
+	image: "obi-wan.jpg",
+	health: 120,
+	attack: 9,
+	counterAttack: 5,
+	};
+
+	luke = {
+	id: "luke",
+	name: "Luke Skywalker",
+	image: "luke.jpg",
+	health: 100,
+	attack: 10,
+	counterAttack: 8,
+	};
+
+	sidious = {
+	id: "sidious",
+	name: "Darth Sidious",
+	image: "sidious.jpg",
+	health: 150,
+	attack: 11,
+	counterAttack: 13,
+	};
+
+	maul = {
+	id: "maul",
+	name: "Darth Maul",
+	image: "maul.jpg",
+	health: 180,
+	attack: 12,
+	counterAttack: 21,
+	};
+
+	characters = [obiwan, luke, sidious, maul];
+
+var battle = {
+	hero: "",
+	villain: "",
+	defeated: 0,
+	heroHealth: 0,
+	villainHealth: 0,
+	heroBaseAttack: 0,
+	heroCurrentAttack: 0,
+	villainAttack: 0,
+	};
+
+};
+
+
+
+function initialize() {
+
+	$("#attackButton").hide();	
+	initializeCharacters();	
+	drawAvailableCharacters();
+	}
+
+initialize();
 
 });
-
