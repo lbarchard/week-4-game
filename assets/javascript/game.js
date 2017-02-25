@@ -15,6 +15,8 @@ var sidious = characterObject
 var maul = characterObject
 var characters = [];
 
+var resetGame
+
 var battle = {
 	hero: "",
 	villain: "",
@@ -57,6 +59,7 @@ $("[id=4]").on("click", function() {
 function drawAvailableCharacters() {
 	for (var i = 0; i < characters.length; i++) {
 		value = '[id=' + i + ']';
+		$(i).empty();
 		drawCharacter(i, value);
 	}
 }
@@ -74,14 +77,12 @@ function drawCharacter(index, location) {
 function battleStage(character) {
 	id = "[id=" + character + "]";
 	if (battle.hero === "") {
-
 		$(id).empty();
 		drawCharacter(character, "#hero");
 		battle.hero = characters[character].id;
 		battle.heroBaseAttack = characters[character].attack;
 		battle.heroCurrentAttack = characters[character].attack;
 		battle.heroHealth = characters[character].health;
-
 		$("#instructionText").text("Choose a character to battle against!");
 
 	}
@@ -101,19 +102,46 @@ $("#attackButton").on("click", function() {
 	battle.heroHealth -= battle.villainAttack;
 	battle.villainHealth -= battle.heroCurrentAttack;
 	battle.heroCurrentAttack += battle.heroBaseAttack;
+	$("#heroInflictedDamage").text("You attacked " + battle.villain + " and inflicted " + battle.heroCurrentAttack + " damage.");
+	$("#villainInflictedDamage").text(battle.villain + " attacked you and inflicted " + battle.villainAttack + " damage.");
+	$("#instructionText").text("Choose a character to battle against!");
+	$("#hero .characterHealth").text(battle.heroHealth)
+	$("#villain .characterHealth").text(battle.villainHealth)
 	checkForWinner();
 })
+
+
 
 function checkForWinner() {
 
 	if (battle.villainHealth <= 0) {
-		$("#instructionText").text("You won!");
+		$("#attackButton").fadeOut(200);
+		$("#instructionText").text("You won that battle!  Can you win the war?  Choose another character to battle!");
+		$("#heroInflictedDamage").text("");
+		$("#villainInflictedDamage").text("");
+
 		$("#villain").empty();
 		battle.villain = "";
+		battle.defeated += 1
+			if (battle.defeated === characters.length - 1) {
+				$("#instructionText").text("You won the war!!  You are a Jedi Master!!");
+				$("#hero").empty();
+				resetGame = setInterval(initialize, 3000);
+				
+			}
+
 	}
 	else if (battle.heroHealth <= 0) {
+		$("#attackButton").fadeOut(200);
 		$("#instructionText").text("You lose!");
 		$("#hero").empty();
+		$("#villain").empty();
+		$("#attackButton").hide();
+		$("#instructionText").text("You lose!!  You have brought shame to the galaxy!");
+		$("#heroInflictedDamage").text("");
+		$("#villainInflictedDamage").text("");
+		resetGame = setInterval(initialize, 3000);
+
 	}
 }
 
@@ -156,24 +184,33 @@ function initializeCharacters() {
 
 	characters = [obiwan, luke, sidious, maul];
 
-var battle = {
-	hero: "",
-	villain: "",
-	defeated: 0,
-	heroHealth: 0,
-	villainHealth: 0,
-	heroBaseAttack: 0,
-	heroCurrentAttack: 0,
-	villainAttack: 0,
+	battle = {
+		hero: "",
+		villain: "",
+		defeated: 0,
+		heroHealth: 0,
+		villainHealth: 0,
+		heroBaseAttack: 0,
+		heroCurrentAttack: 0,
+		villainAttack: 0,
 	};
+
+	console.log(battle);
 
 };
 
-
+function setUpTheBaseHTML() {
+	$("#instructionText").text("Click a character to choose it as your hero!");
+	$("#attackButton").hide();	
+	for (var i = 0; i < 4; i++) {
+		$(i).empty();
+	}
+}
 
 function initialize() {
-
-	$("#attackButton").hide();	
+	clearInterval(resetGame);
+	setUpTheBaseHTML();
+	
 	initializeCharacters();	
 	drawAvailableCharacters();
 	}
